@@ -1,0 +1,20 @@
+model: 11
+n_size: 128
+debug_labels: True
+angles:
+  linspace: [0,360, 50]
+stacks:
+  sample:
+    subdir: "Tomo"
+    pattern: "Spheres_{:04d}.tiff"
+  180_deg:
+    subdir: "180deg"
+    pattern: "Spheres_180deg.tiff"
+  flat_before:
+    count: 5
+    subdir: "Flat_Before"
+    pattern: "Spheres_flat_before{:04d}.tiff"
+  dark_before:
+    count: 5
+    subdir: "Dark_Before"
+    pattern: "Spheres_dark_before{:04d}.tiff"
