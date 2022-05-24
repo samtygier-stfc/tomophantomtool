@@ -86,6 +86,7 @@ class TomoPhantomTool:
                 sample_transmission[:, n, :] -= text
             sample_transmission = sample_transmission.clip(0, 1)
 
+        self.apply_effects(sample_transmission)
         self.save_images(sample_transmission, sample_settings["subdir"],
                          sample_settings["pattern"])
 
@@ -103,8 +104,20 @@ class TomoPhantomTool:
                     stack_transmission[:, n, :] += text
             stack_transmission = stack_transmission.clip(0, 1)
 
+        self.apply_effects(stack_transmission)
         self.save_images(stack_transmission, stack_settings["subdir"],
                          stack_settings["pattern"])
+
+    def apply_effects(self, stack):
+        for effect_name, effect_settings in self.settings["effects"].items():
+            if effect_name == "dark":
+                self.apply_effect_dark(stack, effect_settings)
+
+    def apply_effect_dark(self, stack, settings):
+        if "uniform" in settings:
+            stack += float(settings["uniform"])
+        else:
+            raise NotImplementedError("Unknown dark settings")
 
     def save_images(self, data: np.ndarray, subdir: str, pattern: str):
         outscale = 1
