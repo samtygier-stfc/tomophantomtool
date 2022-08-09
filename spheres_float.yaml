@@ -1,8 +1,8 @@
 model: 11
 n_size: 128
-debug_labels: True
+debug_labels: False
 angles:
-  linspace: [0,360, 50]
+  linspace: [0,360, 100]
 stacks:
   sample:
     subdir: "Tomo"
@@ -21,3 +21,6 @@ stacks:
 effects:
   dark:
     uniform: 1e-1
+  hot_pixels:
+    density: 1e-3
+    add: 0.5

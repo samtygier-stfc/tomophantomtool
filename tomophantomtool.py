@@ -4,6 +4,7 @@ import sys
 import warnings
 from pathlib import Path
 
+import numpy
 import numpy as np
 import tomophantom
 from tomophantom import TomoP3D
@@ -18,7 +19,6 @@ path_library3D = Path(tomophantom.__file__).parent / "Phantom3DLibrary.dat"
 
 
 class TomoPhantomTool:
-
     def __init__(self, input_file: Path, output_dir: Path):
         self.input_file = input_file
         self.output_dir = output_dir
@@ -112,10 +112,26 @@ class TomoPhantomTool:
         for effect_name, effect_settings in self.settings["effects"].items():
             if effect_name == "dark":
                 self.apply_effect_dark(stack, effect_settings)
+            elif effect_name == "hot_pixels":
+                self.apply_effect_hot_pixels(stack, effect_settings)
 
     def apply_effect_dark(self, stack, settings):
         if "uniform" in settings:
             stack += float(settings["uniform"])
+        else:
+            raise NotImplementedError("Unknown dark settings")
+
+    def apply_effect_hot_pixels(self, stack, settings):
+        if hasattr(self, "hot_pixels_mask"):
+            mask = self.hot_pixels_mask
+        else:
+            density = float(settings["density"])
+            shape = [self.size[1], 1, self.size[0]]
+            mask = numpy.random.uniform(size=shape) < density
+            self.hot_pixels_mask = mask
+
+        if "add" in settings:
+            stack += float(settings["add"]) * mask
         else:
             raise NotImplementedError("Unknown dark settings")
 
