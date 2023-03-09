@@ -11,9 +11,7 @@ from tomophantom import TomoP3D
 import yaml
 
 from PIL import Image, ImageDraw
-from skimage import io as skio
-
-skio.use_plugin('tifffile')
+from tifffile import tifffile
 
 path_library3D = Path(tomophantom.__file__).parent / "Phantom3DLibrary.dat"
 
@@ -114,6 +112,8 @@ class TomoPhantomTool:
                 self.apply_effect_dark(stack, effect_settings)
             elif effect_name == "hot_pixels":
                 self.apply_effect_hot_pixels(stack, effect_settings)
+            elif effect_name == "shot_to_shot":
+                self.apply_effect_shot_to_shot(stack, effect_settings)
 
     def apply_effect_dark(self, stack, settings):
         if "uniform" in settings:
@@ -135,19 +135,29 @@ class TomoPhantomTool:
         else:
             raise NotImplementedError("Unknown dark settings")
 
+    def apply_effect_shot_to_shot(self, stack, settings):
+        if "random" in settings:
+            variation = numpy.random.normal(1,float(settings["random"]), size=(1,stack.shape[1],1))
+            stack *= variation
+        else:
+            raise NotImplementedError("Unknown shot_to_shot settings")
+
     def save_images(self, data: np.ndarray, subdir: str, pattern: str):
         outscale = 1
         outmode = np.float32
 
         out_subdir = self.output_dir / subdir
-        out_subdir.mkdir(parents=True)
+        try:
+            out_subdir.mkdir(parents=True)
+        except FileExistsError:
+            pass
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             for i in range(0, data.shape[1]):
                 file_path = out_subdir / pattern.format(i)
-                skio.imsave(file_path,
+                tifffile.imwrite(file_path,
                             (data[:, i, :] * outscale).astype(outmode),
-                            compress="ZLIB")
+                            compression="ZLIB")
 
 
 if __name__ == "__main__":

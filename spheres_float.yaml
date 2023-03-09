@@ -24,3 +24,5 @@ effects:
   hot_pixels:
     density: 1e-3
     add: 0.5
+  shot_to_shot:
+    random: 1e-2
