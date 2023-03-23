@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
 import sys
 from math import *
 import warnings
@@ -95,6 +96,10 @@ class TomoPhantomTool:
         self.save_images(sample_transmission, sample_settings["subdir"],
                          sample_settings["pattern"])
 
+        if "imat_log" in sample_settings:
+            self.save_imat_log(angles, sample_settings["subdir"], sample_settings["imat_log"])
+
+
     def create_stack(self, name, stack_settings, value):
         shape = [self.size[1], stack_settings["count"], self.size[0]]
         stack_transmission = np.ones(shape, dtype=np.float32) * value
@@ -165,6 +170,18 @@ class TomoPhantomTool:
                 tifffile.imwrite(file_path,
                             (data[:, i, :] * outscale).astype(outmode),
                             compression="ZLIB")
+
+    def save_imat_log(self, angles: np.ndarray, subdir: str, file_name: str):
+        log_header = "TIME STAMP,IMAGE TYPE,IMAGE COUNTER,COUNTS BM3 before image,COUNTS BM3 after image\n"
+        log_template = "{date},Projection,{projection},Angle:{angle},Monitor 3 before: 73769,Monitor 3 after: 203948\n"
+
+        file_path = self.output_dir / file_name
+        date_s = datetime.utcnow().ctime()
+        with open(file_path, "w") as log_file:
+            log_file.write(log_header)
+            for n, angle in enumerate(angles):
+                line = log_template.format(date=date_s, projection=n, angle=angle)
+                log_file.write(line)
 
 
 if __name__ == "__main__":
