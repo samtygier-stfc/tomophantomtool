@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+from math import *
 import warnings
 from pathlib import Path
 
@@ -37,6 +38,12 @@ class TomoPhantomTool:
         if "linspace" in self.settings["angles"]:
             self.angles = np.linspace(*self.settings["angles"]["linspace"],
                                       dtype='float32')
+        elif "golden" in self.settings["angles"]:
+            start, stop, count = self.settings["angles"]["golden"]
+            assert start == 0
+            golden_angle = 180 * (3 - sqrt(5))
+            self.angles = np.array([(n * golden_angle) % stop for n in range(count)],
+                                   dtype='float32')
         else:
             raise ValueError(
                 f"Unknown angle specification: {self.settings['angles']}")
