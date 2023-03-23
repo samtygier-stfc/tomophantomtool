@@ -5,6 +5,7 @@ import sys
 from math import *
 import warnings
 from pathlib import Path
+from typing import Optional
 
 import numpy
 import numpy as np
@@ -94,7 +95,7 @@ class TomoPhantomTool:
 
         self.apply_effects(sample_transmission)
         self.save_images(sample_transmission, sample_settings["subdir"],
-                         sample_settings["pattern"])
+                         sample_settings["pattern"], angles)
 
         if "imat_log" in sample_settings:
             self.save_imat_log(angles, sample_settings["subdir"], sample_settings["imat_log"])
@@ -154,7 +155,7 @@ class TomoPhantomTool:
         else:
             raise NotImplementedError("Unknown shot_to_shot settings")
 
-    def save_images(self, data: np.ndarray, subdir: str, pattern: str):
+    def save_images(self, data: np.ndarray, subdir: str, pattern: str, angles: Optional[np.ndarray] = None):
         outscale = 1
         outmode = np.float32
 
@@ -166,7 +167,10 @@ class TomoPhantomTool:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             for i in range(0, data.shape[1]):
-                file_path = out_subdir / pattern.format(i)
+                values = {'projection': i}
+                if angles is not None:
+                    values['angle'] = angles[i]
+                file_path = out_subdir / pattern.format(i, **values)
                 tifffile.imwrite(file_path,
                             (data[:, i, :] * outscale).astype(outmode),
                             compression="ZLIB")
