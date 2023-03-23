@@ -42,17 +42,17 @@ class TomoPhantomTool:
                 f"Unknown angle specification: {self.settings['angles']}")
 
     def create_stacks(self):
-        for stack in self.settings["stacks"]:
-            if stack == "sample":
-                self.create_sample(stack, self.settings["stacks"][stack])
-            elif stack == "180_deg":
-                self.create_sample(stack, self.settings["stacks"][stack], 180)
+        for stack_type, stack in self.settings["stacks"].items():
+            if stack_type == "sample":
+                self.create_sample(stack_type, stack)
+            elif stack_type == "180_deg":
+                self.create_sample(stack_type, stack, 180)
             else:
-                if "flat" in stack:
+                if "flat" in stack_type:
                     value = 1
                 else:
                     value = 0
-                self.create_stack(stack, self.settings["stacks"][stack], value)
+                self.create_stack(stack_type, stack, value)
 
     @staticmethod
     def make_label(size, label):
