@@ -13,8 +13,7 @@ import yaml
 from PIL import Image, ImageDraw
 from tifffile import tifffile
 
-path_library3D = Path(tomophantom.__file__).parent / "Phantom3DLibrary.dat"
-
+path_library3D = Path(tomophantom.__file__).parent / "phantomlib" / "Phantom3DLibrary.dat"
 
 class TomoPhantomTool:
     def __init__(self, input_file: Path, output_dir: Path):
