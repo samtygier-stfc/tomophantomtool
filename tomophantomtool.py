@@ -2,17 +2,14 @@
 
 from datetime import datetime
 import sys
-from math import *
+from math import sqrt
 import warnings
 from pathlib import Path
 from typing import Optional
 
-import numpy
 import numpy as np
 import tomophantom
-from tomophantom import TomoP3D
 import yaml
-
 from PIL import Image, ImageDraw
 from tifffile import tifffile
 
@@ -70,13 +67,13 @@ class TomoPhantomTool:
         draw.text([size[0] // 5, size[1] // 5], label, fill=255)
         return np.array(img) / 256
 
-    def create_sample(self, name, sample_settings, angle: float = None):
+    def create_sample(self, name, sample_settings, angle: float | None = None):
         if angle is None:
             angles = self.angles
         else:
             angles = np.array([angle], dtype=np.float32)
 
-        sample_absorb = TomoP3D.ModelSino(self.settings["model"], self.size[1],
+        sample_absorb = tomophantom.TomoP3D.ModelSino(self.settings["model"], self.size[1],
                                           self.size[0], self.size[1], angles,
                                           str(path_library3D))
 
@@ -140,7 +137,7 @@ class TomoPhantomTool:
         else:
             density = float(settings["density"])
             shape = [self.size[1], 1, self.size[0]]
-            mask = numpy.random.uniform(size=shape) < density
+            mask = np.random.uniform(size=shape) < density
             self.hot_pixels_mask = mask
 
         if "add" in settings:
@@ -150,7 +147,7 @@ class TomoPhantomTool:
 
     def apply_effect_shot_to_shot(self, stack, settings):
         if "random" in settings:
-            variation = numpy.random.normal(1,float(settings["random"]), size=(1,stack.shape[1],1))
+            variation = np.random.normal(1,float(settings["random"]), size=(1,stack.shape[1],1))
             stack *= variation
         else:
             raise NotImplementedError("Unknown shot_to_shot settings")
