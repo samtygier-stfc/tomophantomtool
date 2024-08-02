@@ -29,9 +29,7 @@ class TomoPhantomTool:
 
     def create_model(self):
         print(path_library3D)
-        self.size = [
-            int(np.sqrt(2) * self.settings["n_size"]), self.settings["n_size"]
-        ]
+        self.size = [self.settings["n_size"], self.settings["n_size"]]
 
         if "linspace" in self.settings["angles"]:
             self.angles = np.linspace(*self.settings["angles"]["linspace"],
@@ -72,7 +70,7 @@ class TomoPhantomTool:
         else:
             angles = np.array([angle], dtype=np.float32)
 
-        sample_absorb = tomophantom.TomoP3D.ModelSino(self.settings["model"], self.size[1],
+        sample_absorb = tomophantom.TomoP3D.ModelSino(self.settings["model"], int(self.size[1] / sqrt(2)),
                                           self.size[0], self.size[1], angles,
                                           str(path_library3D))
 
