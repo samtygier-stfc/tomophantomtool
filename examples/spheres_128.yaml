@@ -7,6 +7,7 @@ stacks:
   sample:
     subdir: "Tomo"
     pattern: "Spheres_{:04d}.tiff"
+    imat_log: tomo.txt
   180_deg:
     subdir: "180deg"
     pattern: "Spheres_180deg.tiff"
