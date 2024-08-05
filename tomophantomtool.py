@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (C) 2024 ISIS Rutherford Appleton Laboratory UKRI
+# SPDX - License - Identifier: GPL-3.0-or-later
 
 from datetime import datetime
 import sys
