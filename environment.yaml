@@ -1,0 +1,9 @@
+name: tomophantom
+channels:
+  - conda-forge
+  - httomo
+dependencies:
+  - tomophantom
+  - pyyaml
+
+
