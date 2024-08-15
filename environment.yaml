@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - httomo
 dependencies:
-  - tomophantom
+  - tomophantom = 3.0.1
   - pyyaml
 
 
